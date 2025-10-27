@@ -9,6 +9,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 
 import { authClient } from '@/lib/auth-client';
+import { useHasActiveSubscription } from '@/features/auth/components/subscriptions/hooks/use-subscription';
 
 const menuItems = [
   {
@@ -36,6 +37,8 @@ const menuItems = [
 export const AppSidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
+
+  const { hasActiveSubscription, isLoading } = useHasActiveSubscription();
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader>
@@ -68,19 +71,35 @@ export const AppSidebar = () => {
           </SidebarGroup>
         ))}
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className='list-none'>
         <SidebarMenu>
-          <SidebarMenuButton tooltip='Update to Pro' className='gap-x-4 h-10 px-4' onClick={() => {}}>
-            <StarIcon className='h-4 w-4' />
-            <span>Upgrage to Pro</span>
-          </SidebarMenuButton>
+          {!hasActiveSubscription && !isLoading && (
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                tooltip='Update to Pro'
+                className='gap-x-4 h-10 px-4'
+                onClick={() => {
+                  authClient.checkout({ slug: 'pro' });
+                }}
+              >
+                <StarIcon className='h-4 w-4' />
+                <span>Upgrage to Pro</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
         </SidebarMenu>
-        <SidebarMenu>
-          <SidebarMenuButton tooltip='Billing Portal' className='gap-x-4 h-10 px-4' onClick={() => {}}>
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            tooltip='Billing Portal'
+            className='gap-x-4 h-10 px-4'
+            onClick={() => {
+              authClient.customer.portal();
+            }}
+          >
             <CreditCardIcon className='h-4 w-4' />
             <span>Billing Portal</span>
           </SidebarMenuButton>
-        </SidebarMenu>
+        </SidebarMenuItem>
         <SidebarMenu>
           <SidebarMenuButton
             tooltip='Sign Out'
