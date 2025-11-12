@@ -10,7 +10,7 @@ export const AddNodeButton = () => {
   return (
     <NodeSelector open = {selectorOpen} onOpenChange={setSelectorOpen}>
       <Button 
-      onClick={()=> {}}
+      // onClick={()=> {}}
       size= "icon"
       variant="outline"
       className="bg-background"
